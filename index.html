@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="为 B站、小红书、抖音生成贴合平台语气的评论草稿，并维护产品与竞品资料。" />
+  <title>声浪 · 多平台评论工作台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2313161f'/%3E%3Cpath d='M16 39c6-15 11-15 16 0 5-22 10-22 16 0' fill='none' stroke='%23ff654d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <style>
+    :root{--bg:#f4f3ee;--paper:#fffdfa;--ink:#17171c;--muted:#6f6d68;--line:#dedbd2;--accent:#f2573f;--accent2:#ffb545;--dark:#171922;--shadow:0 14px 35px rgba(32,27,19,.08);--radius:20px}
+    *{box-sizing:border-box}html{font-size:16px}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+    button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(242,87,63,.24);outline-offset:2px}
+    .topbar{height:70px;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:760;letter-spacing:.02em}.mark{width:34px;height:34px;border-radius:11px;background:var(--accent);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}.mark svg{width:22px}
+    .top-actions{display:flex;align-items:center;gap:10px}.save-state{font-size:.82rem;color:#b9bbc5}.ghost-dark{border:1px solid #3b3d48;background:transparent;color:#e9e9ed;border-radius:10px;padding:9px 13px}
+    .layout{display:grid;grid-template-columns:340px minmax(0,1fr);min-height:calc(100vh - 70px)}
+    aside{border-right:1px solid var(--line);padding:24px 20px;background:#eeece6}.aside-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.aside-head h2{font-size:.82rem;text-transform:uppercase;letter-spacing:.12em;margin:0;color:#68655f}
+    .mini-btn{border:1px solid var(--line);background:var(--paper);border-radius:9px;padding:7px 10px;font-weight:650}.profile-list{display:grid;gap:9px}.profile{width:100%;text-align:left;background:transparent;border:1px solid transparent;padding:13px 14px;border-radius:14px;color:var(--ink)}.profile:hover{background:rgba(255,255,255,.55)}.profile.active{background:var(--paper);border-color:#d6d2c8;box-shadow:0 7px 20px rgba(28,25,20,.07)}.profile strong{display:block;font-size:.96rem;margin-bottom:4px}.profile span{font-size:.78rem;color:var(--muted)}
+    .tip{margin-top:24px;padding:15px;border:1px dashed #c8c4ba;border-radius:14px;color:#6e6b65;font-size:.8rem;line-height:1.65}.tip b{color:var(--ink)}
+    main{padding:28px;min-width:0}.workspace{max-width:1180px;margin:0 auto}.hero{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px}.hero h1{margin:0;font-family:Georgia,"Songti SC",serif;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:620;letter-spacing:-.03em}.hero p{margin:7px 0 0;color:var(--muted)}
+    .step{display:inline-flex;align-items:center;gap:7px;background:#e4e1d8;padding:7px 10px;border-radius:20px;font-size:.78rem;font-weight:700}.step i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+    .grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(400px,1.35fr);gap:20px}.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.panel{padding:22px}.panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.panel-title h2{font-size:1.02rem;margin:0}.edit-link{border:0;background:none;color:var(--accent);font-size:.84rem;font-weight:700}
+    label{display:block;font-size:.8rem;font-weight:720;margin:0 0 7px;color:#4d4b47}.field{margin-bottom:16px}input,textarea,select{width:100%;border:1px solid #d9d6cd;background:#fff;border-radius:11px;padding:11px 12px;color:var(--ink)}textarea{resize:vertical;min-height:86px;line-height:1.55}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid #d7d3ca;background:#fff;border-radius:99px;padding:9px 13px;font-size:.84rem;color:#53514d}.chip.active{background:var(--dark);border-color:var(--dark);color:#fff}.platforms{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.platform{border:1px solid #d7d3ca;background:#fff;border-radius:13px;padding:12px;text-align:left}.platform.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:#fff8f5}.platform strong{display:block;margin-bottom:3px}.platform small{color:var(--muted)}
+    .range-row{display:flex;align-items:center;gap:12px}.range-row input{padding:0;accent-color:var(--accent)}.count{width:42px;height:34px;display:grid;place-items:center;border-radius:9px;background:#ece9e1;font-weight:800}
+    .generate{border:0;background:var(--accent);color:#fff;width:100%;padding:14px;border-radius:12px;font-weight:800;box-shadow:0 8px 18px rgba(242,87,63,.24);transition:.2s transform,.2s box-shadow}.generate:hover{transform:translateY(-1px);box-shadow:0 11px 23px rgba(242,87,63,.3)}
+    .result-card{overflow:hidden;min-height:610px}.result-head{background:var(--dark);color:#fff;padding:18px 20px;display:flex;align-items:center;justify-content:space-between}.result-head h2{font-size:1rem;margin:0}.result-head div{display:flex;gap:8px}.small-dark{border:1px solid #444651;background:#262832;color:#f6f6f8;border-radius:8px;padding:7px 10px;font-size:.78rem}.results{padding:13px;display:grid;gap:9px;max-height:670px;overflow:auto}.comment{border:1px solid #e1ded6;border-radius:14px;padding:14px 14px 12px;background:#fff;display:grid;grid-template-columns:32px 1fr auto;gap:11px;align-items:start}.num{font-family:Georgia,serif;color:#aaa69f;font-size:1rem;padding-top:2px}.comment p{margin:0;line-height:1.65;font-size:.92rem}.meta{display:flex;gap:7px;margin-top:8px}.tag{font-size:.7rem;color:#77736c;background:#f0eee8;border-radius:6px;padding:3px 6px}.copy-one{border:0;background:#f2f0ea;border-radius:8px;padding:7px;color:#555}.copy-one:hover{background:#e6e2da}.empty{min-height:510px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}.empty-icon{width:72px;height:72px;border-radius:50%;background:#f0ede6;display:grid;place-items:center;margin:0 auto 15px;font-size:1.7rem}.empty b{display:block;color:var(--ink);margin-bottom:7px}
+    dialog{border:0;border-radius:20px;padding:0;width:min(680px,calc(100% - 30px));box-shadow:0 30px 90px rgba(0,0,0,.3)}dialog::backdrop{background:rgba(17,18,24,.52);backdrop-filter:blur(4px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:1.05rem;margin:0}.close{border:0;background:none;font-size:1.4rem}.modal-body{padding:20px 22px}.modal-actions{display:flex;justify-content:flex-end;gap:10px;padding:0 22px 20px}.secondary{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 16px}.primary{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:10px 16px;font-weight:750}.danger{margin-right:auto;border:0;background:none;color:#b23a2d}
+    .toast{position:fixed;right:24px;bottom:24px;background:var(--dark);color:#fff;padding:12px 16px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:14px 18px}.profile-list{display:flex;overflow:auto}.profile{min-width:170px}.tip{display:none}.grid{grid-template-columns:1fr}.result-card{min-height:460px}.results{max-height:none}}
+    @media(max-width:600px){.topbar{padding:0 16px;height:62px}.save-state{display:none}.layout{min-height:calc(100vh - 62px)}main{padding:20px 14px}.hero{align-items:start}.hero .step{display:none}.platforms{grid-template-columns:1fr}.field-row{grid-template-columns:1fr}.panel{padding:18px}.comment{grid-template-columns:25px 1fr auto}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15c2-7 4-7 6 0 2-10 4-10 6 0 2-5 4-5 6 0" stroke="white" stroke-width="2.4" stroke-linecap="round"/></svg></span>声浪 Comment Studio</div>
+    <div class="top-actions"><span class="save-state">资料已保存在此浏览器</span><button class="ghost-dark" id="exportBtn">导出资料</button></div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="aside-head"><h2>产品资料库</h2><button class="mini-btn" id="addProfile">＋ 新建</button></div>
+      <div class="profile-list" id="profileList"></div>
+      <div class="tip"><b>写得像真实用户，而不是广告。</b><br>建议只发布基于真实体验、经过你核实的内容，避免重复刷屏或虚构评价。</div>
+    </aside>
+    <main>
+      <div class="workspace">
+        <div class="hero"><div><h1>把产品信息，翻译成平台语感。</h1><p>选择平台和表达方向，生成可继续修改的评论草稿。</p></div><span class="step"><i></i> 草稿工作台</span></div>
+        <div class="grid">
+          <section class="card panel">
+            <div class="panel-title"><h2>生成设置</h2><button class="edit-link" id="editProfile">编辑当前资料</button></div>
+            <div class="field"><label>发布平台</label><div class="platforms" id="platforms">
+              <button class="platform active" data-platform="bilibili"><strong>◉ B站</strong><small>懂行、玩梗、有讨论感</small></button>
+              <button class="platform" data-platform="xiaohongshu"><strong>♥ 小红书</strong><small>体验细节、种草感</small></button>
+              <button class="platform" data-platform="douyin"><strong>♪ 抖音</strong><small>短促、口语、抓重点</small></button>
+            </div></div>
+            <div class="field"><label for="context">关键词 / 搜索主题</label><textarea id="context" placeholder="竞品词：鹤6 Ultra&#10;场景词：抗反光电视&#10;尺寸词：85寸电视推荐"></textarea></div>
+            <div class="field"><label>表达方向</label><div class="chips" id="tones"><button class="chip active" data-tone="natural">自然分享</button><button class="chip" data-tone="expert">专业懂行</button><button class="chip" data-tone="funny">轻松玩梗</button><button class="chip" data-tone="question">提问互动</button><button class="chip" data-tone="compare">竞品对比</button></div></div>
+            <div class="field-row">
+              <div class="field"><label for="length">评论长度</label><select id="length"><option value="short">短句（15–30字）</option><option value="medium" selected>适中（30–60字）</option><option value="long">展开说（60–100字）</option></select></div>
+              <div class="field"><label for="emoji">表情密度</label><select id="emoji"><option value="none">不用表情</option><option value="low" selected>偶尔使用</option><option value="high">活泼一点</option></select></div>
+            </div>
+            <div class="field"><label>生成数量</label><div class="range-row"><input id="amount" type="range" min="3" max="20" value="8"><span class="count" id="amountValue">8</span></div></div>
+            <button class="generate" id="generate">生成 8 条评论草稿</button>
+          </section>
+          <section class="card result-card">
+            <div class="result-head"><h2 id="resultTitle">评论草稿</h2><div><button class="small-dark" id="shuffleBtn">换一批</button><button class="small-dark" id="copyAll">复制全部</button></div></div>
+            <div id="results" class="results"><div class="empty"><div><div class="empty-icon">✦</div><b>准备好后，生成第一批评论</b><span>结果会结合当前产品卖点、竞品信息和平台语气。</span></div></div></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="profileDialog">
+    <form method="dialog" id="profileForm">
+      <div class="modal-head"><h2>产品资料</h2><button class="close" value="cancel" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <input type="hidden" id="profileId">
+        <div class="field-row"><div class="field"><label for="productName">产品名称</label><input id="productName" required placeholder="如：发现X"></div><div class="field"><label for="category">品类</label><input id="category" placeholder="如：Mini LED 电视"></div></div>
+        <div class="field"><label for="sellingPoints">核心卖点（每行一个）</label><textarea id="sellingPoints" placeholder="高刷低延迟&#10;画质通透&#10;性价比高"></textarea></div>
+        <div class="field"><label for="audience">目标人群</label><input id="audience" placeholder="如：主机游戏玩家、年轻家庭"></div>
+        <div class="field-row"><div class="field"><label for="budget">常见预算</label><input id="budget" placeholder="如：5000元左右"></div><div class="field"><label for="sizes">常见尺寸</label><input id="sizes" placeholder="如：75英寸，或65/75/85英寸"></div></div>
+        <div class="field"><label for="scenario">主要需求 / 场景</label><input id="scenario" placeholder="如：客厅观影、主机游戏、壁挂安装"></div>
+        <div class="field"><label for="competitors">竞品与差异（每行一个）</label><textarea id="competitors" placeholder="竞品A：更贵，但系统成熟&#10;竞品B：参数接近，售后网点少"></textarea></div>
+        <div class="field"><label for="avoidWords">禁用词 / 风险表达（用顿号或逗号分隔）</label><input id="avoidWords" placeholder="全网最低、绝对、闭眼入"></div>
+      </div>
+      <div class="modal-actions"><button type="button" class="danger" id="deleteProfile">删除资料</button><button value="cancel" class="secondary">取消</button><button type="button" class="primary" id="saveProfile">保存资料</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast">已复制</div>
+  <script>
+    const DEFAULTS=[
+      {id:'discover-x',name:'发现X',category:'Mini LED 电视',budget:'万元级',sizes:'',scenario:'客厅观影、主机游戏、壁挂安装，兼顾画质与沉浸音质',points:['双倍高亮：1536 分区、6000 nits 亮度','顶配屏幕：黑曜屏 Pro，极黑极抗光','画质卷王：灵狮 AI 画质芯片','同档唯一：帝瓦雷 4.1.2 前出音','同档唯一：330Hz、真金 HDMI 2.1','同档最薄：极简超薄，贴墙如画'],audience:'画质党、电竞玩家、追求客厅影院体验的用户',competitors:['同档竞品的分区与亮度方案相对保守；发现X采用一体聚光灯芯，峰值亮度达6000 nits','同档竞品的屏幕抗反与高刷配置相对常规；发现X黑曜屏 Pro 搭载0.5LR内外双低反与4K 180Hz原生高刷','同档竞品在画质芯片上配置不同；发现X搭载灵狮 AI 画质芯片','同档竞品多为上一代音质方案；发现X标配帝瓦雷4.1.2前出音与穹顶天空音','同档竞品多采用上一代高刷方案；发现X支持330Hz超高刷与满血HDMI 2.1','同档竞品在超薄与前出音之间需要取舍；发现X采用53mm超薄机身、超薄隐形挂架与前出音设计'],avoid:'全网最低、绝对、闭眼入、完爆、吊打'},
+      {id:'discover-x-mini',name:'发现X Mini',category:'Mini LED 电视',budget:'5000元左右',sizes:'65/75/85英寸',scenario:'白天客厅观影、主机游戏、壁挂安装，兼顾抗反光、音质和护眼',points:['同档唯一：黑晶屏，双 AG+LR 抗反光','同档顶配：300Hz 超高刷游戏体验','家装友好：前置回音壁与超薄机身','画质配置：1300 nits 高亮 Mini LED','护眼配置：20000Hz 调光与莱茵认证','同档唯一：4K 高码率影院与 128GB 存储'],audience:'5000元价位、兼顾观影游戏与家装美感，并在意抗反光和音质的用户',competitors:['对小米 S Mini：发现X Mini 为黑晶屏、双 AG+LR 抗反光；小米为普通屏幕','对小米 S Mini：发现X Mini 分区数为260/320/384，小米为392/512/640，小米在分区数量上占优','对小米 S Mini：发现X Mini 支持4K 150Hz原生高刷与300Hz软件刷新，小米为4K 144Hz与240Hz软件刷新','对小米 S Mini：发现X Mini 为1300 nits、96% DCI-P3；小米为1200 nits、94%/94%/95% DCI-P3','对小米 S Mini：发现X Mini 支持20KHz高频调光与20bits混合调光；小米支持15.37KHz与16bits混合调光','对小米 S Mini：发现X Mini 为前置回音壁、120W、4个发声单元；小米为下出音、25W、2个发声单元','对雷鸟鹤6：发现X Mini 为黑晶屏、双 AG+LR 抗反光；雷鸟为华星 HVA 屏、1.3%内低反层','对雷鸟鹤6：发现X Mini 分区数为260/320/384，雷鸟为242/312/420，不同尺寸各有取舍','对雷鸟鹤6：发现X Mini 支持4K 150Hz原生高刷与300Hz软件刷新，雷鸟为4K 144Hz与288Hz软件刷新','对雷鸟鹤6：发现X Mini 三个尺寸均为1300 nits；雷鸟为1100/1300/1300 nits，二者均为96% DCI-P3','对雷鸟鹤6：发现X Mini 支持20KHz高频调光与20bits混合调光；雷鸟支持双向23bit混合调光','对雷鸟鹤6：发现X Mini 为前置回音壁、120W、4个发声单元；雷鸟为下出音、40W、3个发声单元'],avoid:'全网最低、绝对、闭眼入、完爆、吊打'}
+    ];
+    const $=s=>document.querySelector(s);let profiles=JSON.parse(localStorage.getItem('comment-studio-profiles')||'null')||DEFAULTS;let activeId=localStorage.getItem('comment-studio-active')||profiles[0].id;if(!localStorage.getItem('comment-studio-catalog-v2')){if(!profiles.some(p=>p.id==='discover-x'))profiles.unshift(DEFAULTS[0]);activeId='discover-x';localStorage.setItem('comment-studio-catalog-v2','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles));localStorage.setItem('comment-studio-active',activeId)}if(!localStorage.getItem('comment-studio-catalog-v3')){let dx=profiles.find(p=>p.id==='discover-x');if(!dx){dx=structuredClone(DEFAULTS[0]);profiles.unshift(dx)}DEFAULTS[0].competitors.forEach(item=>{if(!dx.competitors.includes(item))dx.competitors.push(item)});activeId='discover-x';localStorage.setItem('comment-studio-catalog-v3','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles));localStorage.setItem('comment-studio-active',activeId)}if(!localStorage.getItem('comment-studio-catalog-v4')){if(!profiles.some(p=>p.id==='discover-x-mini'))profiles.unshift(structuredClone(DEFAULTS[1]));activeId='discover-x-mini';localStorage.setItem('comment-studio-catalog-v4','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles));localStorage.setItem('comment-studio-active',activeId)}if(!localStorage.getItem('comment-studio-catalog-v5')){let dxm=profiles.find(p=>p.id==='discover-x-mini');if(!dxm){dxm=structuredClone(DEFAULTS[1]);profiles.unshift(dxm)}DEFAULTS[1].competitors.forEach(item=>{if(!dxm.competitors.includes(item))dxm.competitors.push(item)});activeId='discover-x-mini';localStorage.setItem('comment-studio-catalog-v5','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles));localStorage.setItem('comment-studio-active',activeId)}if(!localStorage.getItem('comment-studio-catalog-v6')){DEFAULTS.forEach(source=>{const saved=profiles.find(p=>p.id===source.id);if(saved){saved.budget=saved.budget||source.budget;saved.scenario=saved.scenario||source.scenario}});localStorage.setItem('comment-studio-catalog-v6','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles))}if(!localStorage.getItem('comment-studio-catalog-v7')){DEFAULTS.forEach(source=>{const saved=profiles.find(p=>p.id===source.id);if(saved&&source.sizes)saved.sizes=saved.sizes||source.sizes});localStorage.setItem('comment-studio-catalog-v7','1');localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles))}let platform='bilibili',tone='natural',lastResults=[];
+    const platformNames={bilibili:'B站',xiaohongshu:'小红书',douyin:'抖音'};
+    const toneNames={natural:'自然分享',expert:'专业懂行',funny:'轻松玩梗',question:'提问互动',compare:'竞品对比'};
+    const pick=a=>a[Math.floor(Math.random()*a.length)];const clean=s=>(s||'').replace(/[。！？!?]+$/,'');
+    function save(){localStorage.setItem('comment-studio-profiles',JSON.stringify(profiles));localStorage.setItem('comment-studio-active',activeId);renderProfiles()}
+    function current(){return profiles.find(p=>p.id===activeId)||profiles[0]}
+    function renderProfiles(){const box=$('#profileList');box.innerHTML='';profiles.forEach(p=>{const b=document.createElement('button');b.className='profile'+(p.id===activeId?' active':'');b.innerHTML=`<strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(p.category||'未设置品类')} · ${p.points.length} 个卖点</span>`;b.onclick=()=>{activeId=p.id;save()};box.appendChild(b)})}
+    function escapeHTML(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+    function openEditor(isNew=false){const p=isNew?{id:'',name:'',category:'',budget:'',sizes:'',scenario:'',points:[],audience:'',competitors:[],avoid:''}:current();$('#profileId').value=p.id;$('#productName').value=p.name;$('#category').value=p.category;$('#sellingPoints').value=p.points.join('\n');$('#audience').value=p.audience;$('#budget').value=p.budget||'';$('#sizes').value=p.sizes||'';$('#scenario').value=p.scenario||'';$('#competitors').value=p.competitors.join('\n');$('#avoidWords').value=p.avoid;$('#deleteProfile').style.visibility=isNew?'hidden':'visible';$('#profileDialog').showModal()}
+    function showToast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),1600)}
+    const starters={
+      bilibili:['讲真，','看完感觉，','课代表补充一句：','这波我更关注的是','有一说一，','参数党先说结论：'],
+      xiaohongshu:['看完这次展示，','最近正好在看这类产品，','给纠结的姐妹一个参考：','我最在意的其实是','从参数和场景来看，','这个点真的很戳我：'],
+      douyin:['说实话，','重点来了：','这才是关键，','看完评测感觉，','一句话，','别只看参数，']};
+    const questionStarters={bilibili:['各位大佬帮忙看看，','最近准备换电视，','想听听实际用户意见：'],xiaohongshu:['求真实建议！','预算和需求都列清楚了：','最近装修选电视，想问问大家：'],douyin:['求助，','想换电视，','懂行的帮看看：']};
+    const ends={
+      bilibili:['，期待UP后面再做个长期实测。','，这点对目标用户确实有意义。','，懂的都懂。','，建议大家还是按自己的使用场景选。'],
+      xiaohongshu:['，需要的可以重点关注一下～','，对我这种人真的很友好。','，理性种草，还是建议先按需求选。','，先码住，等更多真实反馈。'],
+      douyin:['，这就很实在。','，你们觉得值吗？','，需求对上就很香。','，先收藏再说。']};
+    const emojis={bilibili:['[doge]','👏','🤔'],xiaohongshu:['✨','✅','🙋','💡'],douyin:['👍','🔥','👀','💯']};
+    function getKeywords(){return $('#context').value.split(/\n|[,，、]/).map(x=>x.trim().replace(/^(竞品词|场景词|尺寸词|品类词|关键词)\s*[:：]\s*/,'' )).filter(Boolean)}
+    function coreFor(p,idx){const point=clean(p.points[idx%Math.max(p.points.length,1)]||'整体体验');const comp=clean(p.competitors[idx%Math.max(p.competitors.length,1)]||'同价位产品');const keywords=getKeywords();const keyword=keywords[idx%Math.max(keywords.length,1)]||'';const searchLead=keyword?`最近在看“${keyword}”相关内容，`:'';const rivals=[...new Set((p.competitors||[]).map(x=>x.match(/^对([^：]+)：/)?.[1]).filter(Boolean))];const rival=rivals.length?pick(rivals):'同价位其他型号';const size=p.sizes||'尺寸还没完全定';const pool={
+      natural:[`${searchLead}${p.name}把${point}做得挺到位，不是只堆参数，实际场景里也更容易感知`,`${searchLead}${point}这个提升挺实用，尤其适合${p.audience||'有明确使用需求的人'}`,`${searchLead}如果主要看${point}，${p.name}会是比较值得关注的选择`],
+      expert:[`${searchLead}${point}才是这类${p.category||'产品'}真正影响体验的部分，账面参数只是第一步`,`${searchLead}从完整使用链路看，${p.name}的${point}比单纯堆规格更有价值`,`${searchLead}选${p.category||'产品'}不能只看宣传页，${point}和使用场景是否匹配更重要`],
+      funny:[`${searchLead}本来只是随便看看，结果被${point}精准拿捏了`,`${searchLead}钱包说冷静，${point}说再考虑一下`,`${searchLead}看到${p.name}的${point}，旧设备突然就不香了`],
+      question:[`${searchLead}想买${size}的${p.category||'产品'}，预算${p.budget||'还没完全定'}，主要需求是${p.scenario||p.audience||'日常使用'}，比较在意${point}，选${p.name}合适吗`,`${searchLead}预算${p.budget||'还没完全定'}，想买${size}，平时主要是${p.scenario||p.audience||'日常使用'}，目前在${p.name}和${rival}之间纠结，应该怎么选`,`${searchLead}准备换${size}的${p.category||'产品'}，预算${p.budget||'还没完全定'}，需求是${p.scenario||p.audience||'日常使用'}，现在更倾向${p.name}，这个需求可以直接选它吗`,`${searchLead}预算${p.budget||'还没完全定'}，就想买${size}，主要用来${p.scenario||p.audience||'日常使用'}，对别的要求不算高，${p.name}这个价位值不值得选`,`${searchLead}在${p.name}和${rival}之间纠结，预算${p.budget||'还没完全定'}，想要${size}，主要需求是${p.scenario||p.audience||'日常使用'}。了解到${comp}，但我更在意${point}，这种情况选哪个更合适`],
+      compare:[`${searchLead}对比来看，${comp}。如果更看重${point}，${p.name}的取舍会更清楚`,`${searchLead}同档产品都在卷参数，但${p.name}的${point}更贴近日常使用`,`${searchLead}如果更看重${point}，${p.name}的优先级会高一些；其他需求还是要具体对比`]
+    };return pick(pool[tone])}
+    function makeOne(p,idx){let s=pick(tone==='question'?questionStarters[platform]:starters[platform])+coreFor(p,idx);if($('#length').value!=='short'&&tone!=='question')s+=pick(ends[platform]);if($('#length').value==='long'&&tone!=='question')s+=` 当然最终还是建议结合${p.audience||'自己的需求'}和预算，别只看单一卖点。`;const density=$('#emoji').value;if(density==='high'||(density==='low'&&Math.random()>.58))s+=' '+pick(emojis[platform]);(p.avoid||'').split(/[、,，]/).filter(Boolean).forEach(w=>s=s.replaceAll(w,''));return s.replace(/，，/g,'，')}
+    function generate(){const p=current();if(!p){showToast('请先新建产品资料');return}const n=Number($('#amount').value);const seen=new Set();let tries=0;while(seen.size<n&&tries<n*12){seen.add(makeOne(p,tries));tries++}lastResults=[...seen];renderResults();showToast(`已生成 ${lastResults.length} 条草稿`)}
+    function renderResults(){const box=$('#results');const keywords=getKeywords();$('#resultTitle').textContent=`${platformNames[platform]}评论草稿 · ${lastResults.length} 条`;box.innerHTML='';lastResults.forEach((s,i)=>{const keyword=keywords[i%Math.max(keywords.length,1)]||'';const el=document.createElement('article');el.className='comment';el.innerHTML=`<span class="num">${String(i+1).padStart(2,'0')}</span><div><p>${escapeHTML(s)}</p><div class="meta"><span class="tag">${platformNames[platform]}</span><span class="tag">${toneNames[tone]}</span>${keyword?`<span class="tag">${escapeHTML(keyword)}</span>`:''}</div></div><button class="copy-one" aria-label="复制第 ${i+1} 条">复制</button>`;el.querySelector('button').onclick=()=>copy(s);box.appendChild(el)})}
+    async function copy(text){try{await navigator.clipboard.writeText(text);showToast('已复制到剪贴板')}catch{showToast('复制失败，请手动选择') }}
+    document.querySelectorAll('.platform').forEach(b=>b.onclick=()=>{document.querySelectorAll('.platform').forEach(x=>x.classList.remove('active'));b.classList.add('active');platform=b.dataset.platform});
+    document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');tone=b.dataset.tone});
+    $('#amount').oninput=e=>{$('#amountValue').textContent=e.target.value;$('#generate').textContent=`生成 ${e.target.value} 条评论草稿`};
+    $('#generate').onclick=generate;$('#shuffleBtn').onclick=generate;$('#copyAll').onclick=()=>lastResults.length?copy(lastResults.map((x,i)=>`${i+1}. ${x}`).join('\n')):showToast('请先生成评论');
+    $('#addProfile').onclick=()=>openEditor(true);$('#editProfile').onclick=()=>openEditor(false);
+    $('#saveProfile').onclick=()=>{const name=$('#productName').value.trim();if(!name){showToast('请填写产品名称');return}const id=$('#profileId').value||'p-'+Date.now();const data={id,name,category:$('#category').value.trim(),budget:$('#budget').value.trim(),sizes:$('#sizes').value.trim(),scenario:$('#scenario').value.trim(),points:$('#sellingPoints').value.split('\n').map(x=>x.trim()).filter(Boolean),audience:$('#audience').value.trim(),competitors:$('#competitors').value.split('\n').map(x=>x.trim()).filter(Boolean),avoid:$('#avoidWords').value.trim()};const i=profiles.findIndex(p=>p.id===id);if(i>=0)profiles[i]=data;else profiles.push(data);activeId=id;save();$('#profileDialog').close();showToast('产品资料已保存')};
+    $('#deleteProfile').onclick=()=>{if(profiles.length===1){showToast('至少保留一份产品资料');return}profiles=profiles.filter(p=>p.id!==$('#profileId').value);activeId=profiles[0].id;save();$('#profileDialog').close();showToast('已删除')};
+    $('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(profiles,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='声浪-产品资料.json';a.click();URL.revokeObjectURL(a.href)};
+    function registerWebMCP(){const mc=document.modelContext;if(!mc?.registerTool)return;try{mc.registerTool({name:'generate_comment_drafts',title:'生成评论草稿',description:'根据已选平台、语气和当前产品资料生成一批评论草稿。',inputSchema:{type:'object',properties:{amount:{type:'integer',minimum:3,maximum:20}},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>{if(input?.amount){$('#amount').value=input.amount;$('#amount').dispatchEvent(new Event('input'))}generate();return{platform:platformNames[platform],count:lastResults.length,comments:lastResults}}});}catch(e){console.warn('WebMCP unavailable',e)}}
+    renderProfiles();registerWebMCP();
+  </script>
+</body>
+</html>
